@@ -1,0 +1,84 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlatDist</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css"
+          integrity="sha256-GSio8qamaXapM8Fq9JYdGNTvk/dgs+cMLgPeevOYEx0=" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="css/app.css">
+
+</head>
+<body>
+
+
+<div class="grid-container">
+
+    <br><br><br>
+
+    <!-- Main -->
+    <section id="view.main" class="">
+        <div class="grid-x grid-padding-x">
+            <div class="cell">
+                <h1>Flat Distances</h1>
+            </div>
+        </div>
+
+        <div class="grid-x grid-padding-x">
+            <div class="large-12 cell">
+                <div class="input-group">
+                    <span class="input-group-label"><i class="fa fa-map-marker" aria-hidden="true"></i></span>
+                    <input class="input-group-field" type="text" name="address" id="address"
+                           placeholder="Start by entering an address" autofocus>
+                    <div class="input-group-button">
+                        <input id="startButton" type="submit" class="button" value="Start">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <br>
+
+    <!-- Result -->
+    <section id="resultView" class="hidden">
+        <div class="grid-x grid-padding-x">
+            <div class="large-12 cell">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Destination</th>
+                        <th>Distance</th>
+                        <th>Duration</th>
+                    </tr>
+                    </thead>
+                    <tbody id="resultTable"></tbody>
+                </table>
+            </div>
+            <div class="large-12 columns">
+                <div id="map"></div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+
+<!-- Dependencies -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/js/foundation.min.js"
+        integrity="sha256-mRYlCu5EG+ouD07WxLF8v4ZAZYCA6WrmdIXyn1Bv9Vk=" crossorigin="anonymous"></script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8N8l4DOhjHTIJCpC6ROuYbx6vQwx4nqU"></script>
+
+<!-- App -->
+<script src="js/app.js"></script>
+
+</body>
+</html>
