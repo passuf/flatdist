@@ -44,21 +44,32 @@
 
     <br>
 
-    <!-- Result -->
-    <section id="resultView" class="hidden">
+    <!-- Destinations -->
+    <section id="destinationsView">
         <div class="grid-x grid-padding-x">
             <div class="large-12 cell">
-                <table>
+                <table id="resultTable">
                     <thead>
                     <tr>
                         <th>Destination</th>
+                        <th>Address</th>
                         <th>Distance</th>
-                        <th>Duration</th>
+                        <th>Duration (Foot)</th>
+                        <th>
+                            <a href="#" onclick="addDestination()"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                        </th>
                     </tr>
                     </thead>
-                    <tbody id="resultTable"></tbody>
+                    <tbody id="resultTableBody"></tbody>
                 </table>
             </div>
+        </div>
+    </section>
+
+
+    <!-- Map -->
+    <section id="resultView" class="hidden">
+        <div class="grid-x grid-padding-x">
             <div class="large-12 columns">
                 <div id="map"></div>
             </div>
@@ -76,6 +87,8 @@
         integrity="sha256-mRYlCu5EG+ouD07WxLF8v4ZAZYCA6WrmdIXyn1Bv9Vk=" crossorigin="anonymous"></script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8N8l4DOhjHTIJCpC6ROuYbx6vQwx4nqU"></script>
+
+<script src="js/mindmup-editabletable.js"></script>
 
 <!-- App -->
 <script src="js/app.js"></script>

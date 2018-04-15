@@ -7,12 +7,11 @@
  * Config
  */
 
-DESTINATIONS = [
-    ['Work', 'Uetlibergstrasse 137, Zürich'],
+DEFAULT_DESTINATIONS = [
     ['Zürich HB', 'Zürich HB'],
-    //['Winterthur HB', 'Winterthur HB']
+    ['ETH', 'ETH Zürich Hauptgebäude'],
+    ['Uni', 'Universität Irchel, Zürich'],
 ];
-
 
 /**
  * App
@@ -20,12 +19,13 @@ DESTINATIONS = [
 
 let bounds = new google.maps.LatLngBounds;
 let markersArray = [];
+let destinationList = [];
 
 
 function start() {
     const address = $('#address').val();
     if (address !== null && address !== 'null') {
-        getDistances(address, DESTINATIONS);
+        getDistances(address, destinationList);
         updateUrlParam('address', address);
     }
 }
@@ -50,22 +50,49 @@ function getDistances(address, destinations) {
         } else {
             const results = response.rows[0].elements;
             var originList = response.originAddresses;
-            const destinationList = response.destinationAddresses;
+            const destList = response.destinationAddresses;
             updateResults(destinations, results);
-            drawMap(originList, destinationList);
+            drawMap(originList, destList);
         }
     });
 }
 
-function updateResults(destinations, results) {
-    const list = $('#resultTable');
+function refreshResults() {
+    const list = $('#resultTableBody');
     list.empty();
 
+    for (let i = 0; i < destinationList.length; i++) {
+        const destination = destinationList[i];
+        const title = destination[0];
+        const address = destination[1];
+        const rowId = 'dest-' + i;
+        const distFieldId = rowId + '-dis';
+        const durFieldId = rowId + '-dur';
+        list.append(
+            '<tr id="' + rowId + '">' +
+            '<td>' + title + '</td>' +
+            '<td>' + address + '</td>' +
+            '<td id="' + distFieldId + '">-</td>' +
+            '<td id="' + durFieldId + '">-</td>' +
+            '<td><a href="#" onclick="removeDestination(' + i + ');"><i class="fa fa-trash" aria-hidden="true"></a></td>' +
+            '</tr>');
+    }
+
+    showResults();
+}
+
+function updateResults(destinations, results) {
     for (let i = 0; i < results.length; i++) {
-        const destination = destinations[i][0];
-        const distance = results[i].distance.text;
-        const duration = results[i].duration.text;
-        list.append('<tr><td>' + destination + '</td><td>' + distance + '</td><td>' + duration + '</td></tr>')
+        const result = results[i];
+        if (!result || !result.distance || !result.duration) {
+            $('#dest-' + i + '-dis').html('?');
+            $('#dest-' + i + '-dur').html('?');
+            continue;
+        }
+        const distance = result.distance.text;
+        const duration = result.duration.text;
+        $('#dest-' + i + '-dis').html(distance);
+        $('#dest-' + i + '-dur').html(duration);
     }
 
     showResults();
@@ -73,9 +100,14 @@ function updateResults(destinations, results) {
 
 function showResults() {
     $('#resultView').removeClass('hidden');
+    const resultTable = $('#resultTable');
+    resultTable.editableTableWidget();
+
+    resultTable.off('change');
+    resultTable.on('change', destinationsChanged);
 }
 
-function drawMap(originList, destinationList) {
+function drawMap(originList, destList) {
     deleteMarkers();
 
     var markersArray = [];
@@ -95,7 +127,7 @@ function drawMap(originList, destinationList) {
                     icon: icon
                 }));
             } else {
-                alert('Geocode was not successful due to: ' + status);
+                console.log('Geocode was not successful due to: ' + status);
             }
         };
     };
@@ -103,10 +135,10 @@ function drawMap(originList, destinationList) {
     for (var i = 0; i < originList.length; i++) {
         const originIcon = 'https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=home|cc4b37|000000';
         geocoder.geocode({'address': originList[i]}, showGeocodedAddressOnMap(originIcon));
-        for (var j = 0; j < destinationList.length; j++) {
-            const label = DESTINATIONS[j][0];
+        for (var j = 0; j < destList.length; j++) {
+            const label = destinationList[j][0];
             const destIcon = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + label + '|1779ba|fefefe';
-            geocoder.geocode({'address': destinationList[j]}, showGeocodedAddressOnMap(destIcon));
+            geocoder.geocode({'address': destList[j]}, showGeocodedAddressOnMap(destIcon));
         }
     }
 }
@@ -119,6 +151,10 @@ function deleteMarkers() {
 }
 
 function updateUrlParam(param, paramVal) {
+    if (!paramVal) {
+        return;
+    }
+
     const url = window.location.href;
 
     var newAdditionalURL = '';
@@ -153,6 +189,47 @@ function loadAddressFromUrl() {
     }
 }
 
+function destinationsChanged(evt, newValue) {
+    let newDestinations = [];
+    for (let i = 0; i < destinationList.length; i++) {
+        const title = $('#dest-' + i + ' td:nth-child(1)').text();
+        const address = $('#dest-' + i + ' td:nth-child(2)').text();
+        newDestinations.push([title, address]);
+    }
+    destinationList = newDestinations;
+    storeDestinations();
+
+    refreshResults();
+    start();
+}
+
+/**
+ * Storage
+ */
+
+function loadDestinations() {
+    return JSON.parse(localStorage.getItem('destinations'));
+}
+
+function storeDestinations() {
+    localStorage.setItem('destinations', JSON.stringify(destinationList));
+}
+
+function addDestination() {
+    destinationList.push(['Destination', 'Address']);
+    storeDestinations();
+
+    refreshResults();
+}
+
+function removeDestination(idx) {
+    destinationList.splice(idx, 1);
+    storeDestinations();
+
+    refreshResults();
+    start();
+}
+
 /**
  * Initialization
  */
@@ -169,6 +246,18 @@ $(document).ready(function () {
         }
     });
 
+    // Load destinations
+    destinationList = loadDestinations();
+    if (!destinationList || destinationList.length === 0) {
+        console.log('Loading default destinations');
+        destinationList = DEFAULT_DESTINATIONS;
+    }
+
+    refreshResults();
+    showResults();
+
     // Try to load address from Url param
     loadAddressFromUrl();
+
+    start();
 });
