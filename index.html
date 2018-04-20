@@ -21,7 +21,7 @@
     <br><br><br>
 
     <!-- Main -->
-    <section id="view.main" class="">
+    <section id="mainView" class="">
         <div class="grid-x grid-padding-x">
             <div class="cell">
                 <h1>Flat Distances</h1>
@@ -34,6 +34,14 @@
                     <span class="input-group-label"><i class="fa fa-map-marker" aria-hidden="true"></i></span>
                     <input class="input-group-field" type="text" name="address" id="address"
                            placeholder="Start by entering an address" autofocus>
+                    <label>
+                        <select class="input-group-field" id="travelModeSelect">
+                            <option value="WALKING">Foot</option>
+                            <option value="BICYCLING">Bicycle</option>
+                            <option value="TRANSIT">Public Transport</option>
+                            <option value="DRIVING">Car</option>
+                        </select>
+                    </label>
                     <div class="input-group-button">
                         <input id="startButton" type="submit" class="button" value="Start">
                     </div>
@@ -54,7 +62,7 @@
                         <th>Destination</th>
                         <th>Address</th>
                         <th>Distance</th>
-                        <th>Duration (Foot)</th>
+                        <th>Duration</th>
                         <th>
                             <a href="#" onclick="addDestination()"><i class="fa fa-plus" aria-hidden="true"></i></a>
                         </th>

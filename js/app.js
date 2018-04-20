@@ -13,6 +13,9 @@ DEFAULT_DESTINATIONS = [
     ['Uni', 'Universität Irchel, Zürich'],
 ];
 
+DEFAULT_TRAVEL_MODE = 'WALKING';
+
+
 /**
  * App
  */
@@ -36,12 +39,13 @@ function getDistances(address, destinations) {
     for (let i = 0; i < destinations.length; i++) {
         dests.push(destinations[i][1]);
     }
+    const travelMode = getTravelMode();
 
     var service = new google.maps.DistanceMatrixService;
     service.getDistanceMatrix({
         origins: [address],
         destinations: dests,
-        travelMode: 'WALKING',
+        travelMode: travelMode,
         unitSystem: google.maps.UnitSystem.METRIC,
         avoidHighways: false,
         avoidTolls: false
@@ -230,6 +234,25 @@ function removeDestination(idx) {
     start();
 }
 
+function getTravelMode() {
+    const travelMode = localStorage.getItem('travel_mode');
+    if (!travelMode || travelMode === '') {
+        return DEFAULT_TRAVEL_MODE;
+    }
+    return travelMode;
+}
+
+function setTravelMode(travelMode) {
+    localStorage.setItem('travel_mode', travelMode);
+}
+
+function travelModeChanged() {
+    const travelModeSelect = $('#travelModeSelect');
+    const travelMode = travelModeSelect.val();
+    setTravelMode(travelMode);
+    start();
+}
+
 /**
  * Initialization
  */
@@ -245,6 +268,11 @@ $(document).ready(function () {
             return false;
         }
     });
+
+    // Initialize travel mode select
+    const travelModeSelect = $('#travelModeSelect');
+    travelModeSelect.val(getTravelMode());
+    travelModeSelect.change(travelModeChanged);
 
     // Load destinations
     destinationList = loadDestinations();
