@@ -1,6 +1,11 @@
 # FlatDist
 Calculate the distances from your flat to multiple destinations.
 
+<p align="center">
+  <img src="img/screenshot.png" alt="FlatDist" width="750">
+</p>
+
+
 ## Getting Started
 1. Aquire your own [Google Cloud Platform API Key](https://console.cloud.google.com)
 2. Restrict the key to your domain / IP address (in case it ends up in a Git repository)
